@@ -1,0 +1,11 @@
+# キャッシュファイルを無視する
+*.cache
+
+# .logファイルを無視する
+*.log
+
+# 'node_modules'ディレクトリを無視する
+node_modules/
+
+# 'secret_key.txt'ファイルを無視する
+secret_key.txt
