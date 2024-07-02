@@ -117,8 +117,15 @@ class Toc {
                 if (isActive) {
                     this.toc.style.display = 'none';
                     if (showAllButton) {
-                        showAllButton.style.display = 'block';
+                        showAllButton.style.display = 'none';
                     }
+                    // Reset hidden items
+                    const hiddenItems = tocList.querySelectorAll('li');
+                    hiddenItems.forEach((item, index) => {
+                        if (index >= this.options.maxItems) {
+                            item.classList.add('hidden');
+                        }
+                    });
                 } else {
                     this.toc.style.display = 'block';
                     if (showAllButton) {
