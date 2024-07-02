@@ -69,7 +69,7 @@ class Toc {
             const tocItem = document.createElement('li');
             tocItem.classList.add(this.options.classes[tagName] || `toc-${tagName}`);
             if (itemCount > this.options.maxItems && this.options.includeHeadings.includes(tagName)) {
-                tocItem.classList.add('hidden');
+                tocItem.style.display = 'none';
             }
             const tocLink = document.createElement('a');
             tocLink.href = `#${h.id}`;
@@ -106,8 +106,8 @@ class Toc {
         const showAllButton = this.options.showAll.enabled ? document.getElementById(this.options.showAll.id) : null;
         if (showAllButton && itemCount > this.options.maxItems) {
             showAllButton.addEventListener('click', () => {
-                const hiddenItems = tocList.querySelectorAll('.hidden');
-                hiddenItems.forEach(item => item.classList.remove('hidden'));
+                const hiddenItems = tocList.querySelectorAll('li[style="display: none;"]');
+                hiddenItems.forEach(item => item.style.display = 'list-item');
                 showAllButton.style.display = 'none';
             });
         }
@@ -128,7 +128,7 @@ class Toc {
                     hiddenItems.forEach((item, index) => {
                         const tagName = item.querySelector('a').hash.substring(1).match(/^header\d+$/) ? 'h2' : 'h1';
                         if (index >= this.options.maxItems && this.options.includeHeadings.includes(tagName)) {
-                            item.classList.add('hidden');
+                            item.style.display = 'none';
                         }
                     });
                 } else {
