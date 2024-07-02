@@ -51,8 +51,9 @@ class Toc {
         let itemCount = 0;
 
         headings.forEach(h => {
-            itemCount++;
             const tagName = h.tagName.toLowerCase();
+            itemCount++;
+
             const idList = this.headingIds[tagName];
             const count = this.counters[tagName];
 
@@ -67,7 +68,7 @@ class Toc {
 
             const tocItem = document.createElement('li');
             tocItem.classList.add(this.options.classes[tagName] || `toc-${tagName}`);
-            if (itemCount > this.options.maxItems) {
+            if (itemCount > this.options.maxItems && this.options.includeHeadings.includes(tagName)) {
                 tocItem.classList.add('hidden');
             }
             const tocLink = document.createElement('a');
@@ -125,7 +126,8 @@ class Toc {
                     // Reset hidden items
                     const hiddenItems = tocList.querySelectorAll('li');
                     hiddenItems.forEach((item, index) => {
-                        if (index >= this.options.maxItems) {
+                        const tagName = item.querySelector('a').hash.substring(1).match(/^header\d+$/) ? 'h2' : 'h1';
+                        if (index >= this.options.maxItems && this.options.includeHeadings.includes(tagName)) {
                             item.classList.add('hidden');
                         }
                     });
