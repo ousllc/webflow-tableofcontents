@@ -28,13 +28,18 @@
         display: none;
       }
       .toc-toggle {
-        /* トグルボタンのスタイル */
+        display: block;
+        margin-bottom: 10px;
       }
       .show-all {
-        /* 全て表示ボタンのスタイル */
+        display: block;
+        margin-top: 10px;
       }
-      .toc.active {
-        /* アクティブ状態のスタイル */
+      .toc.active ul {
+        display: block;
+      }
+      .toc ul {
+        display: none;
       }
     </style>
   </head>
@@ -136,6 +141,7 @@ toc.initialize();
 - `toggleButton`: 目次トグルボタンの設定。
   - `enabled`: 目次トグルボタンを有効にするかどうか。
   - `id`: 目次トグルボタンの ID。
+- `includeHeadings`: 目次に含める見出しレベルを指定するリスト（例：`['h2']`）
 
 ### 4. 見出し ID の設定
 
@@ -171,5 +177,46 @@ const toc = new Toc(
 
 - **目次トグルボタン**: 目次の表示/非表示を切り替えます。目次が閉じられるとき、全ての項目が隠され、全て表示ボタンが再表示されます。
 - **全て表示ボタン**: 目次の全ての項目を表示します。クリックするとボタン自体が非表示になります。
+
+### 6. `h2` のみを目次に含める場合
+
+初期化時に `includeHeadings` オプションを指定して、目次に含める見出しレベルを `h2` のみに設定します。
+
+```javascript
+const toc = new Toc(
+  ".article",
+  "#toc",
+  {
+    h1: [],
+    h2: ["section1", "section2", "section3"],
+    h3: [],
+    h4: [],
+    h5: [],
+    h6: [],
+  },
+  {
+    offsetTop: 100,
+    duration: 500,
+    maxItems: 2, // 最大表示項目数
+    classes: {
+      h1: "custom-toc-h1",
+      h2: "custom-toc-h2",
+      h3: "custom-toc-h3",
+      h4: "custom-toc-h
+
+4",
+      h5: "custom-toc-h5",
+      h6: "custom-toc-h6",
+    },
+    showAll: { enabled: true, id: "showAllButton" },
+    toggleButton: { enabled: true, id: "toggleButton" },
+    includeHeadings: ['h2'] // h2 のみを目次に含める
+  }
+);
+
+toc.initialize();
+```
+
+これで、`h2` 見出しのみが目次に含まれるようになります。他の見出しレベルは無視されます。
 
 これで、目次ジェネレーターの設定と使用方法が完了です。必要に応じて、オプションをカスタマイズしてご利用ください。

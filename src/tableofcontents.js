@@ -20,7 +20,8 @@ class Toc {
                 h6: 'toc-h6'
             },
             showAll: { enabled: false, id: '' },
-            toggleButton: { enabled: false, id: '' }
+            toggleButton: { enabled: false, id: '' },
+            includeHeadings: ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'] // 追加: 目次に含める見出しレベル
         }, options);
         this.counters = {
             h1: 1,
@@ -43,7 +44,9 @@ class Toc {
             return;
         }
 
-        const headings = this.contentArea.querySelectorAll('h1, h2, h3, h4, h5, h6');
+        // オプションで指定された見出しレベルを使用してセレクタを作成
+        const selector = this.options.includeHeadings.join(', ');
+        const headings = this.contentArea.querySelectorAll(selector);
         const tocList = document.createElement('ul');
         let itemCount = 0;
 
