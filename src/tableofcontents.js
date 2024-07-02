@@ -33,6 +33,10 @@ class Toc {
         this.idCount = 1;
     }
 
+    sanitizeId(id) {
+        return id.replace(/[^a-zA-Z0-9-_]/g, '');
+    }
+
     initialize() {
         if (!this.contentArea || !this.toc) {
             console.error("Initialization failed: contentArea or TOC container not found.");
@@ -50,7 +54,7 @@ class Toc {
             const count = this.counters[tagName];
 
             if (idList && idList.length >= count) {
-                h.id = idList[count - 1];
+                h.id = this.sanitizeId(idList[count - 1]);
             } else {
                 h.id = `header${this.idCount}`;
             }
@@ -109,23 +113,22 @@ class Toc {
         const toggleButton = this.options.toggleButton.enabled ? document.getElementById(this.options.toggleButton.id) : null;
         if (toggleButton) {
             toggleButton.addEventListener('click', () => {
-                this.toc.classList.toggle('active');
-                const isActive = this.toc.classList.contains('active');
-                if (showAllButton) {
-                    showAllButton.style.display = isActive && itemCount > this.options.maxItems ? 'block' : 'none';
-                }
-                if (!isActive) {
-                    const hiddenItems = tocList.querySelectorAll('li');
-                    hiddenItems.forEach((item, index) => {
-                        if (index >= this.options.maxItems) {
-                            item.classList.add('hidden');
-                        }
-                    });
+                const isActive = this.toc.style.display !== 'none';
+                if (isActive) {
+                    this.toc.style.display = 'none';
+                    if (showAllButton) {
+                        showAllButton.style.display = 'block';
+                    }
+                } else {
+                    this.toc.style.display = 'block';
+                    if (showAllButton) {
+                        showAllButton.style.display = itemCount > this.options.maxItems ? 'block' : 'none';
+                    }
                 }
             });
         }
 
-        this.toc.classList.add('active');
+        this.toc.style.display = 'block';
         if (showAllButton) {
             showAllButton.style.display = itemCount > this.options.maxItems ? 'block' : 'none';
         }
