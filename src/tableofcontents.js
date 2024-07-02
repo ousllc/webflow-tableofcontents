@@ -18,7 +18,9 @@ class Toc {
                 h4: 'toc-h4',
                 h5: 'toc-h5',
                 h6: 'toc-h6'
-            }
+            },
+            showAll: { enabled: false, id: '' },
+            toggleButton: { enabled: false, id: '' }
         }, options);
         this.counters = {
             h1: 1,
@@ -36,11 +38,10 @@ class Toc {
             console.error("Initialization failed: contentArea or TOC container not found.");
             return;
         }
+
         const headings = this.contentArea.querySelectorAll('h1, h2, h3, h4, h5, h6');
         const tocList = document.createElement('ul');
-
         let itemCount = 0;
-        let showAllButton = null;
 
         headings.forEach(h => {
             itemCount++;
@@ -94,35 +95,39 @@ class Toc {
             currentList.appendChild(tocItem);
         });
 
-        // Create "Show All" button if item count exceeds maxItems
-        if (itemCount > this.options.maxItems) {
-            showAllButton = document.createElement('button');
-            showAllButton.textContent = '全て表示';
-            showAllButton.classList.add('show-all');
+        const showAllButton = this.options.showAll.enabled ? document.getElementById(this.options.showAll.id) : null;
+        if (showAllButton && itemCount > this.options.maxItems) {
             showAllButton.addEventListener('click', () => {
                 const hiddenItems = tocList.querySelectorAll('.hidden');
                 hiddenItems.forEach(item => item.classList.remove('hidden'));
                 showAllButton.style.display = 'none';
             });
-            this.toc.appendChild(showAllButton);
         }
 
         this.toc.appendChild(tocList);
 
-        // Create toggle button
-        const toggleButton = document.createElement('button');
-        toggleButton.textContent = '目次';
-        toggleButton.classList.add('toc-toggle');
-        toggleButton.addEventListener('click', () => {
-            this.toc.classList.toggle('active');
-            if (showAllButton) {
-                showAllButton.style.display = this.toc.classList.contains('active') ? 'block' : 'none';
-            }
-        });
-        this.toc.insertBefore(toggleButton, this.toc.firstChild);
+        const toggleButton = this.options.toggleButton.enabled ? document.getElementById(this.options.toggleButton.id) : null;
+        if (toggleButton) {
+            toggleButton.addEventListener('click', () => {
+                this.toc.classList.toggle('active');
+                const isActive = this.toc.classList.contains('active');
+                if (showAllButton) {
+                    showAllButton.style.display = isActive && itemCount > this.options.maxItems ? 'block' : 'none';
+                }
+                if (!isActive) {
+                    const hiddenItems = tocList.querySelectorAll('li');
+                    hiddenItems.forEach((item, index) => {
+                        if (index >= this.options.maxItems) {
+                            item.classList.add('hidden');
+                        }
+                    });
+                }
+            });
+        }
 
+        this.toc.classList.add('active');
         if (showAllButton) {
-            showAllButton.style.display = 'none';
+            showAllButton.style.display = itemCount > this.options.maxItems ? 'block' : 'none';
         }
     }
 }
