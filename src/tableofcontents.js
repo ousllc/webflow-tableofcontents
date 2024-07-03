@@ -21,7 +21,7 @@ class Toc {
             },
             showAll: { enabled: false, id: '' },
             toggleButton: { enabled: false, id: '' },
-            includeHeadings: ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'] // 追加: 目次に含める見出しレベル
+            includeHeadings: ['h1', 'h2', 'h3', 'h4', 'h5', 'h6']
         }, options);
         this.counters = {
             h1: 1,
@@ -129,13 +129,22 @@ class Toc {
                     // Reset hidden items
                     const hiddenItems = tocList.querySelectorAll('li');
                     hiddenItems.forEach((item, index) => {
-                        const tagName = item.querySelector('a').hash.substring(1).match(/^header\d+$/) ? 'h2' : item.querySelector('a').hash.substring(1).match(/^header\d+$/) ? 'h3' : item.querySelector('a').hash.substring(1).match(/^header\d+$/) ? 'h4' : item.querySelector('a').hash.substring(1).match(/^header\d+$/) ? 'h5' : item.querySelector('a').hash.substring(1).match(/^header\d+$/) ? 'h6' : 'h1';
+                        const tagName = item.classList[0].replace('toc-', '');
                         if (index >= this.options.maxItems && this.options.includeHeadings.includes(tagName)) {
                             item.style.display = 'none';
                         }
                     });
                 } else {
                     this.toc.style.display = 'block';
+                    const hiddenItems = tocList.querySelectorAll('li');
+                    hiddenItems.forEach((item, index) => {
+                        const tagName = item.classList[0].replace('toc-', '');
+                        if (index >= this.options.maxItems && this.options.includeHeadings.includes(tagName)) {
+                            item.style.display = 'none';
+                        } else {
+                            item.style.display = 'list-item';
+                        }
+                    });
                     if (showAllButton && itemCount > this.options.maxItems) {
                         showAllButton.style.display = 'block';
                     }
@@ -150,4 +159,5 @@ class Toc {
     }
 }
 
+// グローバル関数として提供
 window.Toc = Toc;
