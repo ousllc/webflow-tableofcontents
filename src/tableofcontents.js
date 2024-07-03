@@ -52,8 +52,6 @@ class Toc {
 
         headings.forEach(h => {
             const tagName = h.tagName.toLowerCase();
-            itemCount++;
-
             const idList = this.headingIds[tagName];
             const count = this.counters[tagName];
 
@@ -68,9 +66,13 @@ class Toc {
 
             const tocItem = document.createElement('li');
             tocItem.classList.add(this.options.classes[tagName] || `toc-${tagName}`);
-            if (itemCount > this.options.maxItems && this.options.includeHeadings.includes(tagName)) {
+            if (itemCount < this.options.maxItems || !this.options.includeHeadings.includes(tagName)) {
+                tocItem.style.display = 'list-item';
+            } else {
                 tocItem.style.display = 'none';
             }
+            itemCount++;
+
             const tocLink = document.createElement('a');
             tocLink.href = `#${h.id}`;
             tocLink.textContent = h.textContent;
@@ -103,16 +105,17 @@ class Toc {
             currentList.appendChild(tocItem);
         });
 
+        this.toc.appendChild(tocList);
+
         const showAllButton = this.options.showAll.enabled ? document.getElementById(this.options.showAll.id) : null;
         if (showAllButton && itemCount > this.options.maxItems) {
+            showAllButton.style.display = 'block';
             showAllButton.addEventListener('click', () => {
                 const hiddenItems = tocList.querySelectorAll('li[style="display: none;"]');
                 hiddenItems.forEach(item => item.style.display = 'list-item');
                 showAllButton.style.display = 'none';
             });
         }
-
-        this.toc.appendChild(tocList);
 
         const toggleButton = this.options.toggleButton.enabled ? document.getElementById(this.options.toggleButton.id) : null;
         if (toggleButton) {
@@ -126,23 +129,23 @@ class Toc {
                     // Reset hidden items
                     const hiddenItems = tocList.querySelectorAll('li');
                     hiddenItems.forEach((item, index) => {
-                        const tagName = item.querySelector('a').hash.substring(1).match(/^header\d+$/) ? 'h2' : 'h1';
+                        const tagName = item.querySelector('a').hash.substring(1).match(/^header\d+$/) ? 'h2' : item.querySelector('a').hash.substring(1).match(/^header\d+$/) ? 'h3' : item.querySelector('a').hash.substring(1).match(/^header\d+$/) ? 'h4' : item.querySelector('a').hash.substring(1).match(/^header\d+$/) ? 'h5' : item.querySelector('a').hash.substring(1).match(/^header\d+$/) ? 'h6' : 'h1';
                         if (index >= this.options.maxItems && this.options.includeHeadings.includes(tagName)) {
                             item.style.display = 'none';
                         }
                     });
                 } else {
                     this.toc.style.display = 'block';
-                    if (showAllButton) {
-                        showAllButton.style.display = itemCount > this.options.maxItems ? 'block' : 'none';
+                    if (showAllButton && itemCount > this.options.maxItems) {
+                        showAllButton.style.display = 'block';
                     }
                 }
             });
         }
 
         this.toc.style.display = 'block';
-        if (showAllButton) {
-            showAllButton.style.display = itemCount > this.options.maxItems ? 'block' : 'none';
+        if (showAllButton && itemCount > this.options.maxItems) {
+            showAllButton.style.display = 'block';
         }
     }
 }
