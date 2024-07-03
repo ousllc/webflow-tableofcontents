@@ -147,5 +147,4 @@ class Toc {
     }
 }
 
-// グローバル関数として提供
 window.Toc = Toc;
