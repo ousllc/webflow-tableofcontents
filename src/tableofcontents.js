@@ -44,7 +44,6 @@ class Toc {
             return;
         }
 
-        // オプションで指定された見出しレベルを使用してセレクタを作成
         const selector = this.options.includeHeadings.join(', ');
         const headings = this.contentArea.querySelectorAll(selector);
         const tocList = document.createElement('ul');
@@ -73,17 +72,22 @@ class Toc {
             }
             itemCount++;
 
-            const tocLink = document.createElement('a');
-            tocLink.href = `#${h.id}`;
+            const tocLink = document.createElement('p');
+            tocLink.setAttribute('data-target', `#${h.id}`);
             tocLink.textContent = h.textContent;
+            tocLink.style.cursor = 'pointer';
             tocLink.addEventListener('click', (e) => {
                 e.preventDefault();
-                const header = document.querySelector(`#${h.id}`);
-                const headerTop = header.getBoundingClientRect().top + window.pageYOffset;
-                const offsetTop = headerTop - this.options.offsetTop;
-
-                // Use the smoothScroll method instead of window.scrollTo
-                this.smoothScroll(offsetTop, this.options.duration);
+                const targetId = tocLink.getAttribute('data-target').slice(1);
+                const header = document.getElementById(targetId);
+                if (header) {
+                    const headerTop = header.getBoundingClientRect().top + window.pageYOffset;
+                    const offsetTop = headerTop - this.options.offsetTop;
+                    window.scrollTo({
+                        top: offsetTop,
+                        behavior: 'smooth'
+                    });
+                }
             });
             tocItem.appendChild(tocLink);
 
@@ -121,27 +125,27 @@ class Toc {
             toggleButton.addEventListener('click', () => {
                 const isActive = this.toc.style.display !== 'none';
                 if (isActive) {
+                    // 目次を非表示にする
                     this.toc.style.display = 'none';
                     if (showAllButton) {
                         showAllButton.style.display = 'none';
                     }
-                    // Reset hidden items
-                    const hiddenItems = tocList.querySelectorAll('li');
-                    hiddenItems.forEach((item, index) => {
-                        const tagName = item.classList[0].replace('toc-', '');
-                        if (index >= this.options.maxItems && this.options.includeHeadings.includes(tagName)) {
+                    // 全ての項目を非表示にリセット
+                    const allItems = tocList.querySelectorAll('li');
+                    allItems.forEach((item, index) => {
+                        if (index >= this.options.maxItems) {
                             item.style.display = 'none';
                         }
                     });
                 } else {
+                    // 目次を表示する
                     this.toc.style.display = 'block';
-                    const hiddenItems = tocList.querySelectorAll('li');
-                    hiddenItems.forEach((item, index) => {
-                        const tagName = item.classList[0].replace('toc-', '');
-                        if (index >= this.options.maxItems && this.options.includeHeadings.includes(tagName)) {
-                            item.style.display = 'none';
-                        } else {
+                    const allItems = tocList.querySelectorAll('li');
+                    allItems.forEach((item, index) => {
+                        if (index < this.options.maxItems) {
                             item.style.display = 'list-item';
+                        } else {
+                            item.style.display = 'none';
                         }
                     });
                     if (showAllButton && itemCount > this.options.maxItems) {
@@ -156,29 +160,6 @@ class Toc {
             showAllButton.style.display = 'block';
         }
     }
-    smoothScroll(targetPosition, duration) {
-        const startPosition = window.pageYOffset;
-        const distance = targetPosition - startPosition;
-        let startTime = null;
-
-        function animation(currentTime) {
-            if (startTime === null) startTime = currentTime;
-            const timeElapsed = currentTime - startTime;
-            const run = ease(timeElapsed, startPosition, distance, duration);
-            window.scrollTo(0, run);
-            if (timeElapsed < duration) requestAnimationFrame(animation);
-        }
-
-        function ease(t, b, c, d) {
-            t /= d / 2;
-            if (t < 1) return c / 2 * t * t + b;
-            t--;
-            return -c / 2 * (t * (t - 2) - 1) + b;
-        }
-
-        requestAnimationFrame(animation);
-    }
-
 }
 
 // グローバル関数として提供
