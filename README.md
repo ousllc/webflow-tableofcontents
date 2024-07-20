@@ -23,25 +23,6 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
-    <style>
-      .hidden {
-        display: none;
-      }
-      .toc-toggle {
-        display: block;
-        margin-bottom: 10px;
-      }
-      .show-all {
-        display: block;
-        margin-top: 10px;
-      }
-      .toc.active ul {
-        display: block;
-      }
-      .toc ul {
-        display: none;
-      }
-    </style>
   </head>
   <body>
     <div class="article">
@@ -52,28 +33,17 @@
       <p>...</p>
       <!-- 他のコンテンツ -->
     </div>
-    <div id="toc">
-      <button id="toggleButton" class="toc-toggle">目次</button>
-      <button id="showAllButton" class="show-all">全て表示</button>
-    </div>
+    <button id="toggleButton" class="toc-toggle">目次</button>
+    <div id="toc"></div>
+    <button id="showAllButton" class="show-all">全て表示</button>
 
     <script src="https://cdn.jsdelivr.net/gh/ousllc/webflow-tableofcontents@latest/dist/tableofcontents.min.js"></script>
     <script>
       const toc = new Toc(
-        ".article",
-        "#toc",
+        ".article", //目次を作成するリッチテキストのクラスまたはID(#article)
+        "#toc", //目次の作成領域を指定
+        //最低限必要なオプション設定
         {
-          h1: ["intro", "overview", "conclusion"],
-          h2: ["section1", "section2"],
-          h3: ["subsection1", "subsection2"],
-          h4: ["detail1"],
-          h5: [],
-          h6: [],
-        },
-        {
-          offsetTop: 100,
-          duration: 500,
-          maxItems: 2, // 最大表示項目数
           classes: {
             h1: "custom-toc-h1",
             h2: "custom-toc-h2",
@@ -82,8 +52,6 @@
             h5: "custom-toc-h5",
             h6: "custom-toc-h6",
           },
-          showAll: { enabled: true, id: "showAllButton" },
-          toggleButton: { enabled: true, id: "toggleButton" },
         }
       );
 
@@ -202,15 +170,13 @@ const toc = new Toc(
       h1: "custom-toc-h1",
       h2: "custom-toc-h2",
       h3: "custom-toc-h3",
-      h4: "custom-toc-h
-
-4",
+      h4: "custom-toc-h4",
       h5: "custom-toc-h5",
       h6: "custom-toc-h6",
     },
     showAll: { enabled: true, id: "showAllButton" },
     toggleButton: { enabled: true, id: "toggleButton" },
-    includeHeadings: ['h2'] // h2 のみを目次に含める
+    includeHeadings: ["h2"], // h2 のみを目次に含める
   }
 );
 
