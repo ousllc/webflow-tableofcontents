@@ -81,12 +81,7 @@ class Toc {
                 const targetId = tocLink.getAttribute('data-target').slice(1);
                 const header = document.getElementById(targetId);
                 if (header) {
-                    const headerTop = header.getBoundingClientRect().top + window.pageYOffset;
-                    const offsetTop = headerTop - this.options.offsetTop;
-                    window.scrollTo({
-                        top: offsetTop,
-                        behavior: 'smooth'
-                    });
+                    this.smoothScroll(header);
                 }
             });
             tocItem.appendChild(tocLink);
@@ -159,6 +154,30 @@ class Toc {
         if (showAllButton && itemCount > this.options.maxItems) {
             showAllButton.style.display = 'block';
         }
+    }
+    smoothScroll(targetElement) {
+        const targetPosition = targetElement.getBoundingClientRect().top + window.pageYOffset - this.options.offsetTop;
+        const startPosition = window.pageYOffset;
+        const distance = targetPosition - startPosition;
+        const duration = this.options.duration;
+        let startTime = null;
+
+        const animation = (currentTime) => {
+            if (startTime === null) startTime = currentTime;
+            const timeElapsed = currentTime - startTime;
+            const run = this.ease(timeElapsed, startPosition, distance, duration);
+            window.scrollTo(0, run);
+            if (timeElapsed < duration) requestAnimationFrame(animation);
+        };
+
+        requestAnimationFrame(animation);
+    }
+
+    ease(t, b, c, d) {
+        t /= d / 2;
+        if (t < 1) return c / 2 * t * t + b;
+        t--;
+        return -c / 2 * (t * (t - 2) - 1) + b;
     }
 }
 
