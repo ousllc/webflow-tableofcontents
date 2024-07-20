@@ -25,6 +25,11 @@
     <title>Document</title>
   </head>
   <body>
+    <!-- 目次 -->
+    <button id="toggleButton" class="toc-toggle">目次</button>
+    <div id="toc"></div>
+    <button id="showAllButton" class="show-all">全て表示</button>
+    <!-- リッチテキスト -->
     <div class="article">
       <!-- 見出し (h1-h6) を含むコンテンツ -->
       <h1>はじめに</h1>
@@ -33,9 +38,6 @@
       <p>...</p>
       <!-- 他のコンテンツ -->
     </div>
-    <button id="toggleButton" class="toc-toggle">目次</button>
-    <div id="toc"></div>
-    <button id="showAllButton" class="show-all">全て表示</button>
 
     <script src="https://cdn.jsdelivr.net/gh/ousllc/webflow-tableofcontents@latest/dist/tableofcontents.min.js"></script>
     <script>
